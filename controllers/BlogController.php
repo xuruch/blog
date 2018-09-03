@@ -26,36 +26,19 @@ class BlogController {
     }
 
     // 操作Redis
-    public function update_display(){
-        
+    public function display(){
         // 接收日志 id
         $id = (int)$_GET['id'];
 
-        // 连接 Redis
-        $redis = new \Predis\Client([
-            'scheme' => 'tcp',
-            'host'   => '127.0.0.1',
-            'port'   => 6379,
-        ]);
-        // var_dump($redis);
-        $key = "blog-{$id}";
-        echo $key;
-        $cc = $redis->hexists("blog_display",$key);
-        // var_dump( $cc);
-        // 判断Hash中是否有这个值
-        if($cc){
-            // 累加 并且返回累加后大值
-            $newNum = $redis->hincrby('blog_display',$key,1);
-            echo $newNum;
-        }else {
-            // 从数据库取出浏览量
-            $blog = new Blog;
-            $display = $blog->getDisplay($id);
-            $display++;
-            // 加到redis
-            $redis->hsetnx('blog_display',$key,$display);
-            echo $display;
-        }
+        $blog = new Blog;
+        echo $blog->getDisplay($id);
+    }
+
+    // 定期同步浏览量
+    public function getDisplayDb(){
+
+        $blog = new Blog;
+        $blog->getDisplayDb();
 
     }
 

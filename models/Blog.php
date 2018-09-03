@@ -10,7 +10,7 @@ class Blog {
         // 连接数据库
         $this->pdo = new PDO('mysql:host=127.0.0.1;dbname=blog','root','198211');
         $this->pdo->exec('set names utf8');
-    }
+    } 
 
     public function search(){
         // 设置where 值
@@ -34,7 +34,7 @@ class Blog {
             $value[] = $_GET['end_date'];
         }
         // 是否显示
-        if(isset($_GET['is_show']) && $_GET['is_show']==1 || $_GET['is_show']==='0'){
+        if(isset($_GET['is_show']) && ($_GET['is_show']==='1' || $_GET['is_show']==='0')){
             $where .= " AND is_show = ?";
             $value[] = $_GET['is_show'];
         }
@@ -125,10 +125,49 @@ class Blog {
     // 从数据库中取出日志的浏览量
     public function getDisplay($id){
 
-        $stmt = $this->pdo->query("SELECT display FROM blogs WHERE id = $id");
+        // 取出日志id并评出键名
+        $key = "blog-{$id}";
         
-        return $stmt->fetch(PDO::FETCH_COLUMN);
+        // 连接 Redis
+        $redis = new \Predis\Client([
+            'scheme' => 'tcp',
+            'host'   => '127.0.0.1',
+            'port'   => 6379,
+        ]);
 
+        // 判断Hash中是否有这个值
+        if($redis->hexists("blog_display",$key)){
+            // 累加 并且返回累加后大值
+            $newNum = $redis->hincrby('blog_display',$key,1);
+            return $newNum;
+        }else {
+            // 从数据库取出浏览量
+            $stmt = $this->pdo->query("SELECT display FROM blogs WHERE id = $id");
+            $display =  $stmt->fetch(PDO::FETCH_COLUMN);
+            $display++;
+            // 加到redis
+            $redis->hsetnx('blog_display',$key,$display);
+            return $display;
+        }
+    }
+
+    // 获取日志的浏览量
+    public function getDisplayDb(){
+
+        // 连接 Redis
+        $redis = new \Predis\Client([
+            'scheme' => 'tcp',
+            'host'   => '127.0.0.1',
+            'port'   => 6379,
+        ]);
+
+        $data = $redis->hgetall('blog_displays');
+
+        foreach($data as $k => $v){
+            $id = str_replace('blog-','',$k);
+            $sql = "UPDATE blogs set display={$v} where id = {$id}";
+            $this->pdo->exec($sql);
+        }
     }
 
 }
