@@ -2,15 +2,7 @@
 namespace models;
 use PDO;
 
-class Blog {
-
-    protected $pdo;
-
-    public function __construct(){
-        // 连接数据库
-        $this->pdo = new PDO('mysql:host=127.0.0.1;dbname=blog','root','198211');
-        $this->pdo->exec('set names utf8');
-    } 
+class Blog extends Base {
 
     public function search(){
         // 设置where 值
@@ -55,7 +47,7 @@ class Blog {
         // 计算开始的下标
         $offset = ($page-1)*$perpage;
         // 取出总的记录数
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM blogs WHERE $where");
+        $stmt = self::$pdo->prepare("SELECT COUNT(*) FROM blogs WHERE $where");
         $stmt->execute($value);
         $count = $stmt->fetch( PDO::FETCH_COLUMN );
         // 计算总的页数（ceil：向上取整（天花板）， floor：向下取整（地板））
@@ -70,7 +62,7 @@ class Blog {
             
         }
 
-        $stmt = $this->pdo->prepare("select * from blogs where $where order by $odby $odway limit $offset,$perpage");
+        $stmt = self::$pdo->prepare("select * from blogs where $where order by $odby $odway limit $offset,$perpage");
         $stmt->execute($value);
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -82,7 +74,7 @@ class Blog {
 
     // 生成静态内容页
     public function content2html(){
-        $stmt = $this->pdo->query('select * from blogs');
+        $stmt = self::$pdo->query('select * from blogs');
         $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         ob_start();
         foreach($blogs as $v){
@@ -102,7 +94,7 @@ class Blog {
     // 生成index静态页
     public function index2html(){
         // 取前20条数据
-        $stmt = $this->pdo->query("SELECT * FROM blogs WHERE is_show=1 ORDER BY id DESC LIMIT 20");
+        $stmt = self::$pdo->query("SELECT * FROM blogs WHERE is_show=1 ORDER BY id DESC LIMIT 20");
         $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // 开启ob缓冲区
@@ -129,11 +121,7 @@ class Blog {
         $key = "blog-{$id}";
         
         // 连接 Redis
-        $redis = new \Predis\Client([
-            'scheme' => 'tcp',
-            'host'   => '127.0.0.1',
-            'port'   => 6379,
-        ]);
+        $redis = \libs\Redis::getRedis();
 
         // 判断Hash中是否有这个值
         if($redis->hexists("blog_display",$key)){
@@ -142,7 +130,7 @@ class Blog {
             return $newNum;
         }else {
             // 从数据库取出浏览量
-            $stmt = $this->pdo->query("SELECT display FROM blogs WHERE id = $id");
+            $stmt = self::$pdo->query("SELECT display FROM blogs WHERE id = $id");
             $display =  $stmt->fetch(PDO::FETCH_COLUMN);
             $display++;
             // 加到redis
@@ -155,18 +143,14 @@ class Blog {
     public function getDisplayDb(){
 
         // 连接 Redis
-        $redis = new \Predis\Client([
-            'scheme' => 'tcp',
-            'host'   => '127.0.0.1',
-            'port'   => 6379,
-        ]);
+        $redis = \libs\Redis::getRedis();
 
         $data = $redis->hgetall('blog_displays');
 
         foreach($data as $k => $v){
             $id = str_replace('blog-','',$k);
             $sql = "UPDATE blogs set display={$v} where id = {$id}";
-            $this->pdo->exec($sql);
+            self::$pdo->exec($sql);
         }
     }
 

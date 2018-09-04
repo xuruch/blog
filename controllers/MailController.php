@@ -7,11 +7,8 @@ class MailController {
 
     public function send(){
 
-        $redis = new \Predis\Client([
-            'scheme' => 'tcp',
-            'host'   => '127.0.0.1',
-            'port'   => 6379,
-        ]);
+        $redis = \libs\Redis::getRedis();
+        
         $mailer = new Mail;
         // 设置用不超时
         ini_set('default_socket_timeout', -1);
@@ -20,7 +17,8 @@ class MailController {
 
         while(true){
             $data = $redis->brpop('email',0);
-            // var_dump($data);die;
+            // var_dump($data);
+            // die;
             $message = json_decode($data[1],true);
              // 2. 发邮件
             $mailer->send($message['title'], $message['content'], $message['from']);

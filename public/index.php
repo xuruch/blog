@@ -59,3 +59,13 @@ function getUrlParams($except = []){
     return $str;
 
 }
+
+// 获取配置文件
+function config($name){
+
+    static $config = null;
+    if($config == null){
+        $config = require(ROOT.'config.php');
+    }
+    return $config[$name];
+}
