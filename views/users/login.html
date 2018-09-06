@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>注册</title>
+    <title>治疗登陆</title>
 </head>
 <body>
+    
+    <?php view('common.nav') ?>
 
-        <?php view('common.nav') ?>
-
-    <h1>注册</h1>
-    <form action="/user/store" method="post">
+    <form action="/user/dologin" method="post">
         邮箱: <input type="text" name="email"><br>
         密码：<input type="password" name="pwd"><br>
         <input type="submit" value="注册">
     </form>
 
     <?php view('common.footer') ?>
+
 </body>
 </html>

@@ -154,4 +154,25 @@ class Blog extends Base {
         }
     }
 
+
+    // 发表日志
+    public function addBlog($title,$content,$is_show){
+
+        $stmt = self::$pdo->prepare("INSERT INTO blogs(title,content,is_show,user_id) VALUES(?,?,?,?)");
+        $res = $stmt->execute([
+                $title,
+                $content,
+                $is_show,
+                $_SESSION['id']
+        ]);
+        if(!$res){
+            echo "发表失败";
+            $error = $stmt->errorInfo();
+            echo "<pre>";
+            var_dump($error);
+            die;
+        }
+        return self::$pdo->lastInsertId();
+    }
+
 }

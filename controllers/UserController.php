@@ -5,10 +5,33 @@ use models\User;
 // 引入模型类
 class UserController {
 
+    // 注册
     public function register(){
 
         // 加载视图
         view('users.add');
+    }
+    // 登陆
+    public function login(){
+        view('users.login');
+    }
+    public function dologin(){
+        $email = $_POST['email'];
+        $pwd = md5($_POST['pwd']);
+
+        $user = new User;
+        $u = $user->dologin($email,$pwd);
+        // var_dump($u);
+        if($u){
+            message('登陆成功',2,'/blog/index');
+        }else {
+            message('登陆失败',1,'/user/login');
+        }
+
+    }
+    public function loginout(){
+        $_SESSION = [];
+        redirect('/');
     }
 
     public function store(){
@@ -71,7 +94,7 @@ class UserController {
             $redis->del($key);
             $value = json_decode($data,true);
             $user = new User;
-            $user->add($value['email'],$value['pwd']);
+            $user->addUser($value['email'],$value['pwd']);
             header('location:/user/login');
         }else {
             die("激活码无效");

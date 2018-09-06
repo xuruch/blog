@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>消息提示</title>
+</head>
+<body>
+    <h1>消息提示</h1>
+    <p><?=$message?></p>
+    <p><a href="<?=$url?>">点击跳转</a>到下一个页面</p>
+    <p> <span id="sec"><?=$seconds?></span>  秒之后自动跳转到下一个页面</p>
+</body>
+</html>
+<!-- 
+- $url：跳转的地址
+- $seconds：自动跳转的秒数
+- $message：提示的消息
+ -->
+<script>
+
+    var sec = "<?=$seconds?>";
+    var sp = document.getElementById('sec');
+    setInterval(function(){
+        sec--;
+        if(sec==0){
+            location.href = "<?=$url?>";
+        }else {
+            sp.innerHTML = sec;
+        }
+    },1000);
+
+</script>

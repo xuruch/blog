@@ -42,4 +42,25 @@ class BlogController {
 
     }
 
+    // 发表日志
+    public function create(){
+        view('blogs.create');
+    }
+
+    public function add_blog(){
+        $title = $_POST['title'];
+        $content = $_POST['content'];
+        $is_show = $_POST['is_show'];
+
+        $blog = new Blog;
+        $b = $blog->addBlog($title,$content,$is_show);
+
+        if($b){
+            message('发表成功',2,'/blog/index');
+        }else {
+            die('发表失败');
+        }
+
+    }
+
 }
