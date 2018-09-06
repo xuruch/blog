@@ -16,9 +16,9 @@ class Redis {
         // 连接 Redis
         if(self::$redis == null){
             // 读取配置文件
-            $config = config('redis');
+            $redis = config('redis');
 
-            self::$redis = new \Predis\Client($config);
+            self::$redis = new \Predis\Client($redis);
         }
         return self::$redis;
 

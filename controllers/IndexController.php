@@ -5,7 +5,9 @@ namespace controllers;
 class IndexController {
     
     public function index(){
-        echo "index";
+        
+        view('index.index');
+
     }
 
 }
