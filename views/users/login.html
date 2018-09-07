@@ -11,6 +11,7 @@
     <?php view('common.nav') ?>
 
     <form action="/user/dologin" method="post">
+        <?php csrf_field() ?>
         邮箱: <input type="text" name="email"><br>
         密码：<input type="password" name="pwd"><br>
         <input type="submit" value="注册">

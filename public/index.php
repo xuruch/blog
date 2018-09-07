@@ -4,6 +4,17 @@ ini_set('session.save_handler', 'redis');
 ini_set('session.save_path', 'tcp://127.0.0.1:6379?database=3');
 ini_set('session.gc_maxlifetime', 600);
 session_start();
+
+// 如果用户以 POST 方式访问网站时，需要验证令牌
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if(!isset($_POST['_token'])){
+        die('违法操作、请不要作死');
+    }
+    if($_POST['_token'] != $_SESSION['token']){
+        die('违法操作、请不要作死');
+    }
+}
+
 // 常量
 define('ROOT', dirname(__FILE__) . '/../');
 
@@ -100,4 +111,17 @@ function message($message,$type,$url,$seconds = 5){
         $_SESSION['_MESS_'] = $message;
         redirect($url);
     }
+}
+// 防止csrf 攻击手段、
+function csrf(){
+    if(!isset($_SESSION['token'])){
+        $token = md5( rand(1,99999).microtime() );
+        $_SESSION['token'] = $token;
+    }
+    return $token;
+}
+// 生成影藏令牌
+function csrf_field(){
+    $csrf = isset($_SESSION['token']) ? $_SESSION['token'] : csrf();
+    return "<input type='hidden' name='_token' value='{$csrf}'>";
 }

@@ -62,5 +62,21 @@ class BlogController {
         }
 
     }
+    
+    // 删除日志
+    public function delete(){
+        $id = $_GET['id'];
+        $blog = new Blog;
+        $blog->delete($id);
+        message('删除成功',2,'/blog/index');
+    }
+
+    // 修改日志
+    public function change(){
+        $id = $_GET['id'];
+        $blog = new Blog;
+        $change_g = $blog->change($id);
+        view('blogs.change',$change_g);
+    }
 
 }

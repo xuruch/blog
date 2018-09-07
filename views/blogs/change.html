@@ -10,20 +10,21 @@
         <?php view('common.nav') ?>
         <h1>添加日志</h1>
     
-        <form action="/blog/add_blog" method="post">
-            <?= csrf_field() ?>
+        <form action="/blog/xiugai" method="post">
             <div>
                 标题：
-                <input type="text" name="title">
+                <input type="text" name="title" value="<?=$change_g['title']?>">
             </div>
             <div>
                 内容：
-                <textarea name="content" id="content"></textarea>
+                <textarea name="content" id="content"><?=$change_g['content']?></textarea>
             </div>
             <div>
                 是否公开：
-                <input type="radio" name="is_show" value="1" checked> 公开
-                <input type="radio" name="is_show" value="0"> 私有
+                
+                <input type="radio" name="is_show" value="1" <?php if($change_g['is_show']=1) echo 'checked' ?>> 公开
+
+                <input type="radio" name="is_show" value="0" <?php if($change_g['is_show']=0) echo 'checked' ?>> 私有
             </div>
             <div>
                 <input type="submit" value="发表日志">

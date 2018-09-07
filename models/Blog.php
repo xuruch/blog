@@ -7,6 +7,7 @@ class Blog extends Base {
     public function search(){
         // 设置where 值
         $where = 1;
+        $where = 'user_id='.$_SESSION['id'];
         // 初始化预处理
         $value = [];
 
@@ -173,6 +174,26 @@ class Blog extends Base {
             die;
         }
         return self::$pdo->lastInsertId();
+    }
+
+    // 删除日志
+    public function delete($id){
+        // 只能删除自己的日志
+        $stmt = self::$pdo->prepare('DELETE FROM blogs WHERE id = ? AND user_id=?');
+        $stmt->execute([
+            $id,
+            $_SESSION['id'],
+        ]);
+    }
+
+    // 修改日志
+    public function change($id){
+        $stmt = self::$pdo->prepare("SELECT * from blogs where id = ?");
+        $stmt->execute(array($id));
+        $change_g = $stmt->fetch(PDO::FETCH_ASSOC);
+        return [
+            'change_g'=>$change_g
+        ];
     }
 
 }

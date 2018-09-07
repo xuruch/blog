@@ -72,8 +72,8 @@
                 <?=$v['is_show']==1 ? '显示' : '不显示'?>
             </td>
             <td>
-                <a href="">修改</a>
-                <a href="">删除</a>
+                <a href="/blog/change?id=<?=$v['id'] ?>">修改</a>
+                <a onclick="return confirm('确定要删除吗？')" href="/blog/delete?id=<?=$v['id'] ?>">删除</a>
             </td>
         </tr>
         <?php endforeach ?>
