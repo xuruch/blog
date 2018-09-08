@@ -43,7 +43,7 @@ class Blog extends Base {
         }
 
         $perpage = 15;
-        // 接收当前页码（大于等于1的整数）， max：最参数中大的值
+        // 接收当前页码
         $page = isset($_GET['page']) ? max(1,(int)$_GET['page']) : 1;
         // 计算开始的下标
         $offset = ($page-1)*$perpage;
@@ -51,7 +51,7 @@ class Blog extends Base {
         $stmt = self::$pdo->prepare("SELECT COUNT(*) FROM blogs WHERE $where");
         $stmt->execute($value);
         $count = $stmt->fetch( PDO::FETCH_COLUMN );
-        // 计算总的页数（ceil：向上取整（天花板）， floor：向下取整（地板））
+        // 计算总的页数
         $pageCount = ceil( $count / $perpage );
         $btns = '';
         for($i=1; $i<=$pageCount; $i++)
@@ -194,6 +194,44 @@ class Blog extends Base {
         return [
             'change_g'=>$change_g
         ];
+    }
+
+    // 修改日志
+    public function update($title,$content,$is_show,$id){
+        $stmt = self::$pdo->prepare('UPDATE blogs set title=?,content=?,is_show=? where id=?');
+        $stmt->execute([
+            $title,
+            $content,
+            $is_show,
+            $id
+        ]);
+    }
+
+    public function find($id)
+    {
+        $stmt = self::$pdo->prepare('SELECT * FROM blogs where id = ?');
+        $stmt->execute([
+            $id
+        ]);
+        return $stmt->fetch();
+    }
+    // 修改或添加日志的时候生成静态页
+    public function addHtml($id){
+        // 取出这次插入日志的ID信息
+        $blog = $this->find($id);
+        ob_start();
+        view('blogs.content',[
+            'blog'=>$blog
+        ]);
+        $str = ob_get_clean();
+        file_put_contents(ROOT.'/public/contents/'.$id.'.html',$str);
+
+    }
+    // 删除静态页
+    public function deleteHtml($id)
+    {
+        // @ 防止 报错：有这个文件就删除，没有就不删除，不用报错
+        @unlink(ROOT.'public/contents/'.$id.'.html');
     }
 
 }

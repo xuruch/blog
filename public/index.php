@@ -2,18 +2,19 @@
 // 使用redis保存 SESSION
 ini_set('session.save_handler', 'redis');
 ini_set('session.save_path', 'tcp://127.0.0.1:6379?database=3');
-ini_set('session.gc_maxlifetime', 600);
+ini_set('session.gc_maxlifetime', 1000000);
 session_start();
 
 // 如果用户以 POST 方式访问网站时，需要验证令牌
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    if(!isset($_POST['_token'])){
-        die('违法操作、请不要作死');
-    }
-    if($_POST['_token'] != $_SESSION['token']){
-        die('违法操作、请不要作死');
-    }
-}
+// if($_SERVER['REQUEST_METHOD'] == 'POST'){
+//     if(!isset($_POST['_token'])){
+//         die('违法操作、请不要作死1');
+//     }
+//     if($_POST['_token'] != $_SESSION['token']){
+//         var_dump($_POST['_token'],$_SESSION['token']);
+//         die('违法操作、请不要作死2');
+//     }
+// }
 
 // 常量
 define('ROOT', dirname(__FILE__) . '/../');
@@ -71,6 +72,7 @@ function getUrlParams($except = []){
     foreach($_GET as $k => $v){
         $str .= "$k=$v&";
     }
+    var_dump($str);die;
     return $str;
 
 }
@@ -123,5 +125,5 @@ function csrf(){
 // 生成影藏令牌
 function csrf_field(){
     $csrf = isset($_SESSION['token']) ? $_SESSION['token'] : csrf();
-    return "<input type='hidden' name='_token' value='{$csrf}'>";
+    ECHO "<input type='hidden' name='_token' value='{$csrf}'>";
 }

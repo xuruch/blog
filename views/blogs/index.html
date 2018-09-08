@@ -56,8 +56,12 @@
             <td>
                 <?=$v['id']?>
             </td>
-            <td>
+            <td style="word-break: break-all;">
+                <?php if($v['is_show']==1): ?>
                 <a target="_blank" href="/contents/<?=$v['id']?>.html"><?=$v['title']?></a>
+                <?php else: ?>
+                <a target="_blank" href="/blog/content?id=<?=$v['id']?>"><?=$v['title']?></a>
+                <?php endif; ?>
             </td>
             <td>
                 <?=$v['created_at']?>
@@ -73,7 +77,11 @@
             </td>
             <td>
                 <a href="/blog/change?id=<?=$v['id'] ?>">修改</a>
-                <a onclick="return confirm('确定要删除吗？')" href="/blog/delete?id=<?=$v['id'] ?>">删除</a>
+                <form action="/blog/delete" method="POST">
+                    <?= csrf_field() ?>
+                    <input type="hidden" name="id" value="<?=$v['id'] ?>">
+                    <input type="submit" value="删除">
+                </form>
             </td>
         </tr>
         <?php endforeach ?>

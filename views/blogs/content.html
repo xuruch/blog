@@ -8,7 +8,9 @@
 </head>
 <body>
 
-    <?php view('common.nav') ?>
+    <!-- <?php view('common.nav') ?> -->
+
+    <div id="menu"></div>
 
     <h1><?=$blog['title']?></h1>
     <p>浏览量：<span id="display"></span></p>
@@ -30,8 +32,22 @@
     $.ajax({
         type:'GET',
         url:url,
+        dataType:'json',
         success:function(data){
-            $("#display").html(data);
+            $("#display").html(data.display);
+            var html = '<a href="/">首页</a>'
+            if(data.email == ''){
+                html += `<a href="/user/register">注册</a>
+                         <a href="/user/login">登陆</a>
+                        `
+            }else {
+                html += data.email + `
+                            <a href="/blog/index">日志列表</a>
+                            <a href="/blog/create">发表日志</a>
+                            <a href="/user/loginout">退出</a>
+                        `
+            }
+            $('#menu').html(html);
         }
     })
 </script>

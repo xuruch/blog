@@ -10,7 +10,9 @@
         <?php view('common.nav') ?>
         <h1>添加日志</h1>
     
-        <form action="/blog/xiugai" method="post">
+        <form action="/blog/update" method="post">
+            <?=csrf_field()?>
+            <input type="hidden" name="id" value="<?=$change_g['id']?>">
             <div>
                 标题：
                 <input type="text" name="title" value="<?=$change_g['title']?>">
