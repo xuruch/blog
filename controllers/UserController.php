@@ -134,4 +134,80 @@ class UserController {
         }
     }
 
+
+    // 上传头像 页面显示
+    public function avatar(){
+        view('users.avatar');
+    }
+    // 头像上传
+    public function addavatar(){
+        // $uploadDir = ROOT.'public/uploads';
+
+        // $data = date("Y-m-d");
+        // if(!is_dir($uploadDir.'/'.$data)){
+        //     mkdir($uploadDir.'/'.$data,0777);
+        // }
+        // $ext = strrchr($_FILES['image']['name'],'.');
+        // $name = md5(time().rand(1,9999));
+        // $fileName = $uploadDir.'/'.$data.'/'.$name.$ext;
+        // move_uploaded_file($_FILES['image']['tmp_name'],$fileName);
+        $upload = \libs\Uploader::make();
+        $upload->upload('image', 'avatar');
+        message("头像上传成功",2,'/');
+    }
+
+    // 批量上传 试图显示
+    public function album(){
+        view('users.album');
+    }
+
+    public function addablum(){
+        $uploadDir = ROOT.'public/uploads/';
+
+        $data = date("Ymd");
+        if(!is_dir($uploadDir.'/'.$data)){
+            mkdir($uploadDir.'/'.$data,0777);
+        }
+
+        foreach($_FILES['images']['name'] as $k => $v){
+            // var_dump($k);die;
+            $ext = strrchr($v,'.');
+            $name = md5(time().rand(1,9999));
+            $name = $name . $ext;
+            move_uploaded_file($_FILES['images']['tmp_name'][$k
+        ],$uploadDir.$data.'/'.$name);
+            echo $uploadDir . $data .'/' . $name . '<hr>';
+        }
+    }
+
+
+    // 上传大图视图
+    public function bigimage(){
+        view('users.bigimage');
+    }
+    // 上传大图片
+    public function uploadbig(){
+        $count = $_POST['count'];
+        $i = $_POST['i'];
+        $size = $_POST['size'];
+        $name = 'big_img'.$_POST['img_name'];
+        $img = $_FILES['img'];
+        // var_dump($img)
+        move_uploaded_file( $img['tmp_name'] , ROOT.'tmp/'.$i);
+
+        $redis = \libs\Redis::getRedis();
+        $uploadedCount = $redis->incr($name);
+        if($uploadedCount == $count){
+            echo "11111111111111111";
+            $fp = fopen(ROOT.'public/uploads/big/'.$name.'.png', 'a');
+            for($i=0;$i<$count;$i++){
+                fwrite($fp,file_get_contents(ROOT.'tmp/'.$i));
+                unlink(ROOT.'tmp/'.$i);
+            }
+            fclose($fp);
+            $redis->del($name);
+        }
+    }
+
+
 }

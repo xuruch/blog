@@ -3,6 +3,7 @@
         "predis/predis": "^1.1",
         "swiftmailer/swiftmailer": "6.0",
         "yansongda/pay": "^2.4",
-        "endroid/qr-code": "^3.4"
+        "endroid/qr-code": "^3.4",
+        "phpoffice/phpspreadsheet": "^1.4"
     }
 }

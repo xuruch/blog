@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>批量上传</title>
+</head>
+<body>
+    <?php view('common.nav') ?>
+    <h1>批量上传</h1>
+
+    <form action="/user/addablum" method="post" enctype="multipart/form-data">
+        <?=csrf_field()?>
+        <div>
+            选择图片：
+            <br>
+            <input type="file" name="images[]">
+            <input type="file" name="images[]">
+            <input type="file" name="images[]">
+            <input type="file" name="images[]">
+            <input type="file" name="images[]">
+        </div>
+        <br>
+        <div>
+            <input type="submit" value="上传">
+        </div>
+    </form>
+
+    <?php view('common.footer') ?>
+</body>
+</html>

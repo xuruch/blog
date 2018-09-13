@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>上传大图</title>
+    <script src="/simditor-2.3.6/scripts/jquery.min.js"></script>
+</head>
+<body>
+    <?php view('common.nav') ?>
+    <h1>上传大图</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input id="img" type="file" name="bigimage">
+    </form>
+    <?php view('common.footer') ?>
+</body>
+</html>
+
+<script>
+
+    var img = document.getElementById('img');
+    img.onchange = function(){
+        // 获取选中的图片
+        var img1 = this.files[0]
+        // 获取图片的尺寸
+        var fileSize = img1.size
+        // 每块的尺寸
+        var perSize = 4096
+        // 计算总的块数
+        var count = Math.ceil(fileSize / perSize)
+        // 为所有分片设定一个唯一的名字
+        var name = "img_"+Math.random(1,99999);
+        for(var i=0;i<count;i++){
+            var img0 = img1.slice(i*perSize, i*perSize+perSize)
+            // 创建一个 FormData 对象
+            var f = new FormData()
+            // 加入到表单中
+            f.append('img', img0)    
+            f.append('count', count)  
+            f.append('i', i)      
+            f.append('size', perSize)
+            f.append('img_name', name)
+            // 上传的服务器
+            $.ajax({
+                type : "POST",
+                url : "/user/uploadbig",
+                data : f,
+                contentType: false,
+                processData: false,
+                success:function(data){
+
+                }
+            });
+        }
+
+    }
+
+</script>
