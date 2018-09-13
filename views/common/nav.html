@@ -5,14 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <script src="/simditor-2.3.6/scripts/jquery.min.js"></script>
 </head>
 <body>
     <h1>智聊系统</h1>
     <a href="/">首页</a>
-    <a href="/blog/index">日志列表</a>
     <?php if(isset($_SESSION['id'])): ?>
+    <a href="/blog/index">日志列表</a>
+    <a href="/user/orders">充值列表</a>
     <a href="/blog/create">发表日志</a>
     <?=$_SESSION['email']?>
+    （ <span id="up-dizhi" style="color:#F00;font-weight:bold;"><?=$_SESSION['money']?></span> 元 <input id="up-money" type="button" value="刷新">）
+    <script>
+        $("#up-money").click(function(){
+            $('#up-dizhi').load("/user/money");
+        })
+    </script>
+    <a href="/user/charge">充值</a>
     <a href="/user/loginout">退出</a>
     <?php else: ?>
 

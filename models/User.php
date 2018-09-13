@@ -24,12 +24,31 @@ class User extends Base {
         if($user){
             $_SESSION['id'] = $user['id'];
             $_SESSION['email'] = $user['email'];
+            $_SESSION['money'] = $user['money'];
 
             return TRUE;
         } else {
             return FALSE;
         }
-
     }
+
+    // 为用户增加金额
+    public function addMoney($money, $userId) {
+        $stmt = self::$pdo->prepare("UPDATE users SET money=money+? WHERE id=?");
+        return  $stmt->execute([
+                    $money,
+                    $userId
+                ]);
+    }
+    // 获取余额显示
+    public function getMoney(){
+        $id = $_SESSION['id'];
+        $stmt = self::$pdo->prepare('SELECT money from users where id = ?');
+        $stmt->execute([$id]);
+        $money = $stmt->fetch(PDO::FETCH_COLUMN);
+        $_SESSION['money'] = $money;
+        return $money;
+    }
+
 
 }

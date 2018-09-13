@@ -84,7 +84,7 @@ class Blog extends Base {
             ]);
             // exit;
             // 获取页面
-            $str = ob_get_contents();
+            $str = ob_get_contents(); 
             // 保存
             file_put_contents(ROOT.'/public/contents/'.$v['id'].'.html',$str);
             // 清空缓冲区
@@ -232,6 +232,12 @@ class Blog extends Base {
     {
         // @ 防止 报错：有这个文件就删除，没有就不删除，不用报错
         @unlink(ROOT.'public/contents/'.$id.'.html');
+    }
+
+    // 取出20条日志放在首页
+    public function getNew(){
+        $stmt = self::$pdo->query('SELECT * FROM blogs WHERE is_show=1 ORDER BY id DESC LIMIT 20');
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }

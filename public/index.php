@@ -72,7 +72,7 @@ function getUrlParams($except = []){
     foreach($_GET as $k => $v){
         $str .= "$k=$v&";
     }
-    var_dump($str);die;
+    // var_dump($str);die;
     return $str;
 
 }

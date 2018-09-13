@@ -6,9 +6,7 @@ class BlogController {
     public function index(){
 
         $blogs = new Blog;
-
         $data = $blogs->search();
-
         view('blogs.index',$data);
 
     }
@@ -46,7 +44,7 @@ class BlogController {
 
     }
 
-    // 发表日志
+    // 发表日志 
     public function create(){
         if($_SESSION['emain']){
             echo "<script>alert('你还未登录')</script>";

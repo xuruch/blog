@@ -1,16 +1,17 @@
 <?php 
 namespace controllers;
 use models\User;
+use models\Order;
 
 // 引入模型类
 class UserController {
 
     // 注册
     public function register(){
-
         // 加载视图
         view('users.add');
     }
+
     // 登陆
     public function login(){
         view('users.login');
@@ -27,11 +28,50 @@ class UserController {
         }else {
             message('登陆失败',1,'/user/login');
         }
-
     }
+
+    // 退出
     public function loginout(){
         $_SESSION = [];
         redirect('/');
+    }
+    // 显示余额
+    public function money(){
+        $user = new User;
+        echo $user->getMoney();
+    }
+
+    // 显示充值页面
+    public function charge(){
+        view('users.charge');
+    }
+    // 充值
+    public function docharge(){
+
+        $money = $_POST['money'];
+        // var_dump($money);die;   
+        $create = new Order;
+        $create->create($money);
+        message('充值订单已生成，请立即支付',2,'/user/orders');
+    }
+
+    // 查询微信订单 
+    public function orderStatus(){
+        $sn = $_GET['sn'];
+
+        $model = new Order;
+        $info = $model->findBySn($sn);
+
+        echo $info['status'];
+    }
+
+
+    // 列出所有的订单
+    public function orders(){
+        
+        $order = new Order;
+        $data = $order->search();
+        view('users.orders',$data);
     }
 
     public function store(){
@@ -48,14 +88,6 @@ class UserController {
         ]);
         $key = "activation_user:{$code}";
         $redis->setex($key, 100, $value);
-
-
-        // $user = new User;
-        // $us = $user->add($email,$pwd);
-        // // var_dump($us);
-        // if(!$us){
-        //     die("注册失败");
-        // }
 
         // 从邮箱地址中取出姓名 
         $name = explode('@', $email);
@@ -79,6 +111,7 @@ class UserController {
         echo '<script>alert("注册成功")</script>';
     }
 
+    // 激活账号
     public function active_user(){
 
         $code = $_GET['code'];

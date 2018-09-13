@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>订单列表</title>
+</head>
+<body>
+    <?php view('common.nav') ?>
+
+    <h1>订单列表</h1>
+
+    <table border="1" width="100%">
+        <tr>
+            <th>ID</th>
+            <th>订单编号</th>
+            <th>金额</th>
+            <th>下单时间</th>
+            <th>订单状态</th>
+            <th>支付时间</th>
+            <th>操作</th>
+        </tr>
+        <?php foreach($data as $v): ?>
+        <tr>
+            <td><?=$v['id']?></td>
+            <td><?=$v['sn']?></td>
+            <td><?=$v['money']?></td>
+            <td><?=$v['created_at']?></td>
+            <td><?= $v['status']==0?'未支付':($v['status']==1?'已支付':'已退款'); ?></td>
+            <td><?=$v['pay_time']?></td>
+            <td>
+                <?php if($v['status']==0): ?>
+                <form target="_blank" action="/alipay/pay" method="post">
+                    <?=csrf_field()?>
+                    <input type="hidden" name="sn" value="<?=$v['sn']?>">
+                    <input type="submit" value="点击支付">
+                </form>
+                <?php endif; ?>
+                <?php if($v['status']==0): ?>
+                <form target="_blank" action="/wxpay/pay" method="post">
+                    <?=csrf_field()?>
+                    <input type="hidden" name="sn" value="<?=$v['sn']?>">
+                    <input type="submit" value="微信支付">
+                </form>
+                <?php endif; ?>
+                <?php ?>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+    <br>
+    <?=$btns?>
+    
+    <?php view('common.footer') ?>
+</body>
+</html>
