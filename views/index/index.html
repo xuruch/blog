@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="/simditor-2.3.6/scripts/jquery.min.js"></script>
     <title>首页</title>
 </head>
 <body>
@@ -19,7 +20,72 @@
         <?php endforeach; ?>
 
     </ul>
-
+    <?php if(config('mode')=='dev'): ?>
+    <select id="alluser">
+            <option value="">选择账号</option>
+    </select>
+    <?php endif; ?>
+    
     <?php view('common.footer') ?>
+
 </body>
 </html>
+
+<script>
+    // 获取所有账号放入 option 标签
+    $.ajax({
+        type:"GET",
+        url:"/tool/users",
+        dataType:"json",
+        success:function(data)
+        {
+            if(data.status_code == 200)
+            {
+                var html = '';
+                for(var i=0;i<data.data.length;i++)
+                {
+                    html += '<option value="'+data.data[i].email+'">'+data.data[i].email+'</option>';
+                }
+                $("#alluser").append(html)
+            }
+        }
+    });
+
+    // 切换账号
+    $("#alluser").change(function(){
+        // 获取选中的值
+        var email = $(this).val()
+        if(email != '')
+        {
+            $.ajax({
+                type:"GET",
+                url:"/tool/dologin?email="+email,
+                success:function(data)
+                {
+                    // 刷新页面
+                    location.reload();
+                }
+            })
+        }
+    });
+
+    <?php if(config('mode') == 'dev'): ?>
+        $("#alluser").change(function(){
+            // 获取选中的值
+            var email = $(this).val()
+            if(email != '')
+            {
+                $.ajax({
+                    type:"GET",
+                    url:"/tool/login?email="+email,
+                    success:function(data)
+                    {
+                        // 刷新页面
+                        location.reload();
+                    }
+                })
+            }
+        })
+    <?php endif; ?>
+
+</script>

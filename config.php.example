@@ -14,6 +14,7 @@ return [
         'charset' => 'utf8',
     ],
     'email' => [
+        'mode' => 'dev',     //  dev （开发模式）   pro（上线模式)
         'mode' => '',    // 值：debug  和 production
         'port' => 25,
         'host' => 'smtp.126.com',

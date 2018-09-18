@@ -105,7 +105,6 @@ class Blog extends Base {
         view('index.index', [
             'blogs' => $blogs,
         ]);
-
         // 从缓冲区取出页面
         $str = ob_get_contents();
 
@@ -238,6 +237,40 @@ class Blog extends Base {
     public function getNew(){
         $stmt = self::$pdo->query('SELECT * FROM blogs WHERE is_show=1 ORDER BY id DESC LIMIT 20');
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // 点赞 
+    public function zan($blog_id){
+        // 判断是否点过赞
+        $stmt = self::$pdo->prepare("SELECT count(*) from blog_zans where user_id=? and blog_id=? ");
+        $stmt->execute([
+                $_SESSION['id'],
+                $blog_id
+        ]);
+        $count = $stmt->fetch(PDO::FETCH_COLUMN);
+        if($count == 1){
+            return false;
+        }
+        // 点赞
+        $stmt = self::$pdo->prepare('INSERT INTO blog_zans(user_id,blog_id) VALUES(?,?)');
+        $zan =  $stmt->execute([
+                    $_SESSION['id'],
+                    $blog_id
+                ]);
+           
+        // 更行点赞数
+        if($zan){
+            $stmt = self::$pdo->prepare('UPDATE blogs set zan=zan+1 where id=?');
+            $a =$stmt->execute([$blog_id]);
+
+        }
+        return $zan;
+    }
+    // 点赞列表显示
+    public function zan_list($id){
+        $stmt = self::$pdo->prepare('SELECT u.id,u.email,u.avatar from blog_zans bz left join users u on bz.user_id=u.id where bz.blog_id=?');
+        $stmt->execute([$id]);
+        return $stmt->fetchAll( PDO::FETCH_ASSOC );
     }
 
 }

@@ -25,6 +25,7 @@ class User extends Base {
             $_SESSION['id'] = $user['id'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['money'] = $user['money'];
+            $_SESSION['avatar'] = $user['avatar'];
 
             return TRUE;
         } else {
@@ -48,6 +49,21 @@ class User extends Base {
         $money = $stmt->fetch(PDO::FETCH_COLUMN);
         $_SESSION['money'] = $money;
         return $money;
+    }
+
+    // 为用户添加头像
+    public function setAvatar($path){
+        $stmt = self::$pdo->prepare('UPDATE users set avatar=? where id=?');
+        $stmt->execute([
+            $path,
+            $_SESSION['id']
+        ]);
+    }
+
+    // ToolController 获取所有用户
+    public function getAll(){
+        $stmt = self::$pdo->query('SELECT * FROM users');
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 

@@ -142,7 +142,6 @@ class UserController {
     // 头像上传
     public function addavatar(){
         // $uploadDir = ROOT.'public/uploads';
-
         // $data = date("Y-m-d");
         // if(!is_dir($uploadDir.'/'.$data)){
         //     mkdir($uploadDir.'/'.$data,0777);
@@ -151,8 +150,13 @@ class UserController {
         // $name = md5(time().rand(1,9999));
         // $fileName = $uploadDir.'/'.$data.'/'.$name.$ext;
         // move_uploaded_file($_FILES['image']['tmp_name'],$fileName);
+        
         $upload = \libs\Uploader::make();
-        $upload->upload('image', 'avatar');
+        $headImage = $upload->upload('image', 'avatar');
+        $user = new User;
+        $user->setAvatar('/uploads/'.$headImage);
+        @unlink( ROOT . 'public/'.$_SESSION['avatar'] );
+        $_SESSION['avatar'] = '/uploads/'.$headImage;
         message("头像上传成功",2,'/');
     }
 

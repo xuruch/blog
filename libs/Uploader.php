@@ -38,6 +38,7 @@ class Uploader {
         $name = $this->fileName();
 
         move_uploaded_file($this->file['tmp_name'], $this->root.$dir.$name);
+        return $dir.$name;
     }
 
 

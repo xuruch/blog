@@ -5,16 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?=$blog['title']?></title>
+    <style>
+        .zan-list {
+            border: 1px solid skyblue;
+            padding: 0;
+            text-align: center;
+        }
+        .zan {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid skyblue;
+            padding: 5px;
+            margin-left: 20px;
+        }
+        .zan-list h3 {
+            padding: 0;
+            margin-top: 0;
+            background-color: #EEE;
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- <?php view('common.nav') ?> -->
+    <?php view('common.nav') ?>
 
     <div id="menu"></div>
 
     <h1><?=$blog['title']?></h1>
     <p>浏览量：<span id="display"></span></p>
     <p><?=$blog['content']?></p>
+    <img id="btn-zan" src="../images/zan.jpg" width="120">
+
+    <div class="zan-list">
+        <h3>点赞列表</h3>
+        <div id="avatar-list"></div>
+    </div>
 
     <?php view('common.footer') ?>
 
@@ -50,4 +77,41 @@
             $('#menu').html(html);
         }
     })
+
+    // 点赞
+    $("#btn-zan").click(function(){
+        $.ajax({
+            type:"POST",
+            url:"/blog/zan?id="+id,
+            dataType:"json",
+            success:function(data){
+                if(data.zan == 200){
+                    alert("点赞成功");
+                }else {
+                    data.message;
+                }
+            }
+        })
+    })
+
+    // 点赞列表
+    $.ajax({
+        type:'GET',
+        url:'/blog/zan_list?id='+id,
+        dataType:'json',
+        success:function(data){
+            // console.log(data);
+            if(data.zan == 200){
+                var html='';
+                for(var i=0;i<data.data.length;i++){
+                    var avatar = data.data[i].avatar ? data.data[i].avatar : '/images/zan.jpg';
+                    html += '<img title="'+data.data[i].email+'" class="zan" src="'+avatar+'">';
+                    console.log(html);
+
+                }
+                $("#avatar-list").html( html )
+            }
+        }
+    })
+
 </script>

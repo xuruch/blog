@@ -37,9 +37,7 @@ class BlogController {
             $sheet->setCellValue('D'.$i, $v['is_show']);
             $i++;
         }
-
         $date = date('Ymd');
-
         // 生成 excel 文件
         $writer = new Xlsx($spreadsheet);
         // var_dump($writer);die;
@@ -64,6 +62,44 @@ class BlogController {
 
         // 读取服务器上的一个文件并以文件流的形式输出给浏览器
         readfile($file);
+    }
+
+    // 点赞
+    public function zan(){
+        $id = $_GET['id'];
+    
+        if(!isset($_SESSION['id'])){
+            echo json_encode([
+                'zan' => '403',
+                'message' => '登录后才能赞哦！！'
+            ]);
+            exit;
+        }
+        $blog = new Blog;
+        $zan = $blog->zan($id);
+        if($zan){
+            json_encode([
+                'zan' => '200',
+                'message' => '点赞成功'
+            ]);
+        }else {
+            json_encode([
+                'zan' => '403',
+                'message' => '已经赞过了'
+            ]);
+        }
+    }
+    // 点赞列表
+    public function zan_list(){
+        $id = $_GET['id'];
+        $blog = new \models\Blog;
+        $data = $blog->zan_list($id);
+
+        echo json_encode([
+            'zan' => 200,
+            'data' => $data,
+        ]);
+
     }
 
 
