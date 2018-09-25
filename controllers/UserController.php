@@ -2,6 +2,7 @@
 namespace controllers;
 use models\User;
 use models\Order;
+use Intervention\Image\ImageManagerStatic as Image;
 
 // 引入模型类
 class UserController {
@@ -35,6 +36,13 @@ class UserController {
         $_SESSION = [];
         redirect('/');
     }
+
+    // 排行榜
+    public function setActiveUser(){
+        $user = new User;
+        $user->setActiveUser();
+    }
+
     // 显示余额
     public function money(){
         $user = new User;
@@ -153,6 +161,14 @@ class UserController {
         
         $upload = \libs\Uploader::make();
         $headImage = $upload->upload('image', 'avatar');
+
+        // 裁切图片
+        $image = Image::make(ROOT . 'public/uploads/'.$path);
+        // 注意：Crop 参数必须是整数，所以需要转成整数：(int)
+        $image->crop((int)$_POST['w'], (int)$_POST['h'], (int)$_POST['x'], (int)$_POST['y']);
+        // 保存时覆盖原图
+        $image->save(ROOT . 'public/uploads/'.$path);
+
         $user = new User;
         $user->setAvatar('/uploads/'.$headImage);
         @unlink( ROOT . 'public/'.$_SESSION['avatar'] );

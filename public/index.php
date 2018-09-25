@@ -6,15 +6,15 @@ ini_set('session.gc_maxlifetime', 1000000);
 session_start();
 
 // 如果用户以 POST 方式访问网站时，需要验证令牌
-// if($_SERVER['REQUEST_METHOD'] == 'POST'){
-//     if(!isset($_POST['_token'])){
-//         die('违法操作、请不要作死1');
-//     }
-//     if($_POST['_token'] != $_SESSION['token']){
-//         var_dump($_POST['_token'],$_SESSION['token']);
-//         die('违法操作、请不要作死2');
-//     }
-// }
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if(!isset($_POST['_token'])){
+        die('违法操作、请不要作死1');
+    }
+    if($_POST['_token'] != $_SESSION['token']){
+        var_dump($_POST['_token'],$_SESSION['token']);
+        die('违法操作、请不要作死2');
+    }
+}
 
 // 常量
 define('ROOT', dirname(__FILE__) . '/../');
@@ -96,6 +96,11 @@ function redirect($route){
 // 返回上一个页面
 function back(){
     redirect($_SERVER['HTTP_REFERER']);
+}
+
+// 过滤XSS（在线编辑器填写的内容不能使用该函数过滤）
+function e($content){
+    return htmlspecialchars($content);
 }
 
 // 提示消息函数

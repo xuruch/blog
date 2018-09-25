@@ -200,11 +200,11 @@ class BlogController {
         $id = $_GET['id'];
         $blogs = new Blog;
         $blog = $blogs->find($id);
-        // var_dump($blog,$blogs);die;
+        // var_dump($blog);die;
 
-        if($_SESSION['id'] != $blog['user_id']){
-            die('你无权访问、这是私人日志');
-        }
+        // if($_SESSION['id'] != $blog['user_id']){
+        //     die('你无权访问、这是私人日志');
+        // }
         view('blogs.content',[
             'blog'=>$blog
         ]);
